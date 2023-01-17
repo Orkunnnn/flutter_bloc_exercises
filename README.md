@@ -1,3 +1,3 @@
-# flutter_counter
+# flutter_bloc_exercises
 
-This is a sample app created based on tutorial from bloclibrary.dev to learn Bloc state management library and how to test both UI and Bloc code.
+This repository is created for stretch my skills in Bloc state management library and testing.
