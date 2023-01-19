@@ -7,13 +7,18 @@ environment:
   sdk: ">=2.18.6 <3.0.0"
 
 dependencies:
+  authentication:
+    path: packages/authentication
   bloc_concurrency: ^0.2.0
   equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
+  formz: ^0.4.1
   http: ^0.13.5
   stream_transform: ^2.1.0
+  user:
+    path: packages/user
 
 dev_dependencies:
   bloc_test: ^9.1.0
