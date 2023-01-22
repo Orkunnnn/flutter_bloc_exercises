@@ -1,90 +1,50 @@
-import 'package:authentication/authentication.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_counter/authentication/bloc/authentication_bloc.dart';
-import 'package:flutter_counter/home/views/home_page.dart';
-import 'package:flutter_counter/login/views/login_page.dart';
-import 'package:flutter_counter/splash/splash.dart';
-import 'package:user/user.dart';
+import 'package:flutter_counter/theme/cubit/theme_cubit.dart';
+import 'package:flutter_counter/weather/views/weather_page.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:weather_repository/weather_repository.dart';
 
-class App extends StatefulWidget {
-  const App({super.key});
+class WeatherApp extends StatelessWidget {
+  const WeatherApp({
+    super.key,
+    required this.weatherRepository,
+  });
 
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  late final AuthenticationRepository _authenticationRepository;
-  late final UserRepository _userRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    _authenticationRepository = AuthenticationRepository();
-    _userRepository = UserRepository();
-  }
+  final WeatherRepository weatherRepository;
 
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: _authenticationRepository,
+      value: weatherRepository,
       child: BlocProvider(
-        create: (context) => AuthenticationBloc(
-          authenticationRepository: _authenticationRepository,
-          userRepository: _userRepository,
-        ),
-        child: const AppView(),
+        create: (_) => ThemeCubit(),
+        child: const WeatherAppView(),
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _authenticationRepository.dispose();
-    super.dispose();
-  }
 }
 
-class AppView extends StatefulWidget {
-  const AppView({super.key});
+class WeatherAppView extends StatelessWidget {
+  const WeatherAppView({super.key});
 
-  @override
-  State<AppView> createState() => _AppViewState();
-}
-
-class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState!;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
-      builder: (context, child) {
-        return BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case AuthenticationStatus.unknown:
-                break;
-              case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil(
-                  HomePage.route(),
-                  (route) => false,
-                );
-                break;
-              case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil(
-                  LoginPage.route(),
-                  (route) => false,
-                );
-                break;
-            }
-          },
-          child: child,
-        );
-      },
-      onGenerateRoute: (_) => SplashPage.route(),
+    final textTheme = Theme.of(context).textTheme;
+    return BlocBuilder<ThemeCubit, Color>(
+      builder: (context, state) => MaterialApp(
+        theme: ThemeData(
+          primaryColor: state,
+          textTheme: GoogleFonts.rajdhaniTextTheme(),
+          appBarTheme: AppBarTheme(
+            titleTextStyle: GoogleFonts.rajdhaniTextTheme(textTheme)
+                .apply(bodyColor: Colors.white)
+                .headline6,
+          ),
+        ),
+        home: const WeatherPage(),
+      ),
     );
   }
 }
